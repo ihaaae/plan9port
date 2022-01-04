@@ -44,9 +44,10 @@ char			*acmeshell;
 extern char		wdir[]; /* must use extern because no dimension given */
 int			globalautoindent;
 int			dodollarsigns;
+Remote		*remotes;
 
 Channel	*cplumb;		/* chan(Plumbmsg*) */
-Channel	*cwait;		/* chan(Waitmsg) */
+Channel	*cvwait;		/* chan(Vwaitmsg) */
 Channel	*ccommand;	/* chan(Command*) */
 Channel	*ckill;		/* chan(Rune*) */
 Channel	*cxfidalloc;	/* chan(Xfid*) */
