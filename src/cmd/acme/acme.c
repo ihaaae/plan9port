@@ -482,6 +482,11 @@ keyboardthread(void *v)
 			break;
 		case KKey:
 		casekeyboard:
+			if(r == Kcmd+'q' || r == Kcmd+'Q'){
+				if(rowclean(&row))
+					sendul(cexit, 0);
+				break;
+			}
 			typetext = rowtype(&row, r, mouse->xy);
 			t = typetext;
 			if(t!=nil && t->col!=nil && !(r==Kdown || r==Kleft || r==Kright))	/* scrolling doesn't change activecol */
