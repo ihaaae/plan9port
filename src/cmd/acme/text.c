@@ -563,6 +563,48 @@ textbswidth(Text *t, Rune c)
 	return t->q0-q;
 }
 
+/* Distance to BOL, if xtabs is true then \t is counted as tabstop */
+int
+textbacklinewidth(Text *t, uint nline, int xtabs)
+{
+	uint q, tb;
+	Rune r;
+
+	q = t->q0;
+	tb = 0;
+	while(q > 0){
+		r = textreadc(t, q-1);
+		if(r == '\n' && !--nline)
+			break;
+		if(r == '\t' && xtabs && t->tabstop)
+			tb += t->tabstop-1;
+		--q;
+	}
+	return t->q0-q+tb;
+}
+
+/* Distance to next BOL, if xtabs is true then \t is counted as tabstop */
+int
+textforwardlinewidth(Text *t, uint nline, int xtabs)
+{
+	uint q, tb;
+	Rune r;
+
+	q = t->q0;
+	tb = 0;
+	while(q < t->file->b.nc){
+		r = textreadc(t, q);
+		if(r == '\n' && !--nline) { /* eat the last newline */
+			++q;
+			break;
+		}
+		if(r == '\t' && xtabs && t->tabstop)
+			tb += t->tabstop-1;
+		++q;
+	}
+	return q-t->q0+tb;
+}
+
 int
 textfilewidth(Text *t, uint q0, int oneelement)
 {
@@ -692,6 +734,23 @@ texttype(Text *t, Rune r)
 			textshow(t, t->q1+1, t->q1+1, TRUE);
 		return;
 	case Kdown:
+		if(t->what == Tag)
+			goto Tagdown;
+		typecommit(t);
+
+		/* go forward one line, then current line offset */
+		nnb = textforwardlinewidth(t, 1, FALSE);
+		nb = nnb + textbacklinewidth(t, 1, TRUE);
+
+		/* go forward until we reach our original offset or EOL */
+		while (t->q0+nnb<t->file->b.nc && nb>nnb && (r=textreadc(t, t->q0+nnb))!='\n') {
+			if (r=='\t' && t->tabstop)
+				nb -= t->tabstop-1;
+			nnb++;
+		}
+
+		textshow(t, t->q0+nnb, t->q0+nnb, TRUE);
+		return;
 	case 0x0E:	/* ^N: Scroll down */
 		if(t->what == Tag)
 			goto Tagdown;
@@ -711,6 +770,23 @@ texttype(Text *t, Rune r)
 		textsetorigin(t, q0, TRUE);
 		return;
 	case Kup:
+		if(t->what == Tag)
+			goto Tagup;
+		typecommit(t);
+
+		/* back up two lines, go forward current line offset */
+		nnb = textbacklinewidth(t, 2, FALSE);
+		nb = nnb - textbacklinewidth(t, 1, TRUE); /* can be negative */
+
+		/* go forward until we reach our original offset or EOL */
+		while (t->q0-nnb<t->file->b.nc && nnb>nb && (r=textreadc(t, t->q0-nnb))!='\n') {
+			if (r=='\t' && t->tabstop)
+				nb += t->tabstop-1;
+			nnb--;
+		}
+
+		textshow(t, t->q0-nnb, t->q0-nnb, TRUE);
+		return;
 	case 0x10:	/* ^P: Scroll up */
 		if(t->what == Tag)
 			goto Tagup;
