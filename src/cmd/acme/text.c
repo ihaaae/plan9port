@@ -692,6 +692,7 @@ texttype(Text *t, Rune r)
 			textshow(t, t->q1+1, t->q1+1, TRUE);
 		return;
 	case Kdown:
+	case 0x0E:	/* ^N: Scroll down */
 		if(t->what == Tag)
 			goto Tagdown;
 		n = t->fr.maxlines/3;
@@ -710,6 +711,7 @@ texttype(Text *t, Rune r)
 		textsetorigin(t, q0, TRUE);
 		return;
 	case Kup:
+	case 0x10:	/* ^P: Scroll up */
 		if(t->what == Tag)
 			goto Tagup;
 		n = t->fr.maxlines/3;
