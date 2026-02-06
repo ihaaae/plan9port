@@ -1,6 +1,6 @@
 #define estrdup	estrdup9p
 #define emalloc	emalloc9p
-int 		debug;
+extern int	debug;
 
 enum
 {

@@ -12,6 +12,7 @@ enum
 };
 
 QLock	writelk;
+int	debug;
 
 void		muxin(void*);
 void		muxout(void*);
