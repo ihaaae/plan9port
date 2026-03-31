@@ -56,24 +56,12 @@ void waitrelaythread(void*);
 
 char		*menu2str[] = {
 	"win",
-	"Alt",
-	"Diffusion",
-//	"Ldef",
-//	"Pop",
-//	"Ltype",
-//	"Lrefs",
-//	"Lhov",
-//	"Push",
-	"goinstall",
-	"gotest",
-	"Pyre",
-	"Lint",
-	"Test",
-	"Format",
-	"Pasteurl",
-	"Today",
-	"Note+",
-	"Note-",
+	"diff",
+	"grep",
+	"mk",
+	"sam",
+	"page",
+	"ls",
 	nil
 };
 
