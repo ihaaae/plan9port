@@ -744,20 +744,17 @@ int stage = 0;
 	if(b == 1){
 		if(m & NSEventModifierFlagOption){
 			gfx_abortcompose(self.client);
-			if(m & NSEventModifierFlagControl){
+			if(m & NSEventModifierFlagShift){
+				[self sendmouse:8];
+				return;
+			}else if(m & NSEventModifierFlagControl){
 				[self sendmouse:2];
 				[self sendmouse:1];
 				return;
-			}
-			b = 2;
+			}else
+				b = 2;
 		}else if(m & NSEventModifierFlagCommand)
 			b = 4;
-		else if(m & NSEventModifierFlagControl)
-			b = 8;
-	}else if(b == 4){
-		m = [e modifierFlags];
-		if(m & NSEventModifierFlagCommand)
-			b = 8;
 	}
 	if(m & NSEventModifierFlagShift)
 		b <<= 5;
